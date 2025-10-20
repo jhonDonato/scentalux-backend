@@ -1,8 +1,18 @@
+# =========================
+# Archivos y carpetas comunes
+# =========================
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+logs/
+uploads/
+
+# Evitar incluir builds anidados
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# =========================
+# Archivos de IDEs y herramientas
+# =========================
 
 ### STS ###
 .apt_generated
@@ -31,3 +41,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# =========================
+# Configuraciones locales
+# =========================
+application-local.properties
+application-dev.properties
+*.log
