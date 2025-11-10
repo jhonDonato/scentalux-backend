@@ -52,6 +52,9 @@ public class OrderServiceImpl extends implGenericService<Order, Integer> impleme
         order.setPostalCode(orderDTO.getPostalCode());
         order.setPhone(orderDTO.getPhone());
 
+        // ✅ ESTABLECER ESTADO INICIAL COMO PENDIENTE
+        order.setStatus("PENDIENTE");
+
         // Calcular totales
         double subtotal = 0.0;
 
@@ -131,7 +134,7 @@ public class OrderServiceImpl extends implGenericService<Order, Integer> impleme
     public OrderDTO uploadReceipt(Integer orderId, String receiptImageUrl) throws Exception {
         Order order = findById(orderId);
         order.setReceiptImageUrl(receiptImageUrl);
-        order.setStatus("CONFIRMADO");
+       // order.setStatus("CONFIRMADO");
         Order updatedOrder = orderRepo.save(order);
         return convertToDTO(updatedOrder);
     }
