@@ -12,7 +12,7 @@ RUN mvn dependency:go-offline -B
 # Copiar el código fuente
 COPY src ./src
 
-# Compilar el proyecto (sin correr tests)
+# Compilar el proyecto
 RUN mvn clean package -DskipTests
 
 # ===========================
@@ -25,8 +25,12 @@ WORKDIR /app
 # Copiar el JAR generado
 COPY --from=build /app/target/*.jar app.jar
 
-# Exponer el puerto configurado
+# Instalar wait-for-it para dependencias
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+# Exponer el puerto
 EXPOSE 9090
 
-# Comando de inicio
+# Comando de inicio (usando variables de entorno)
 ENTRYPOINT ["java", "-jar", "app.jar"]

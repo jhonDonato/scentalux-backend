@@ -3,6 +3,7 @@
 # =========================
 HELP.md
 target/
+!target/*.jar
 logs/
 uploads/
 
@@ -47,4 +48,24 @@ build/
 # =========================
 application-local.properties
 application-dev.properties
+
+# =========================
+# Archivos temporales y del sistema
+# =========================
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# =========================
+# Archivos de log (solo los archivos .log, no carpetas)
+# =========================
 *.log
+!logs/
+
+# =========================
+# Maven wrapper (opcional)
+# =========================
+.mvn/
+mvnw
+mvnw.cmd
