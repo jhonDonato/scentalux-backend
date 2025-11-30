@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table; // ← AGREGAR ESTA IMPORTACIÓN
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "users") // ← AGREGAR ESTA LÍNEA
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
     @Id
@@ -42,5 +44,5 @@ public class User {
     @JoinTable(name="user_role",
             joinColumns = @JoinColumn(name="id_user", referencedColumnName = "idUser"),
             inverseJoinColumns = @JoinColumn(name="id_role", referencedColumnName = "idRole"))
-    private List<Role> roles = new ArrayList<>(); // 👈 Inicializado aquí
+    private List<Role> roles = new ArrayList<>();
 }
