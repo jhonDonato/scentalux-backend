@@ -10,9 +10,14 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:9002")
-                .allowedMethods("*")
+                .allowedOrigins(
+                    "https://scentalux-frontend.vercel.app",  // Tu frontend en Vercel
+                    "http://localhost:9002",                  // Desarrollo local
+                    "http://localhost:3000",                  // React dev server común
+                    "http://localhost:5173"                   // Vite dev server común
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
-                .allowCredentials(false); // ← Temporalmente SIN credentials
+                .allowCredentials(true);  // ← Ahora SÍ con credentials
     }
 }
