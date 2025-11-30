@@ -1,17 +1,24 @@
 package com.scentalux.config;
 
 import com.scentalux.model.Role;
+import com.scentalux.model.User;
 import com.scentalux.repo.RolRepository;
+import com.scentalux.repo.IUserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
 public class DataInitializer {
     
     private final RolRepository roleRepo;
+    private final IUserRepo userRepo;
+    private final PasswordEncoder passwordEncoder;
     
     @EventListener(ApplicationReadyEvent.class)
     public void initializeData() {
@@ -26,14 +33,41 @@ public class DataInitializer {
             Role admin = new Role();
             admin.setName("ADMIN");
             admin.setDescription("Rol para administradores");
-            roleRepo.save(admin);
+            Role savedAdmin = roleRepo.save(admin);
             
-            Role vendedor = new Role();
-            vendedor.setName("VENDEDOR");
-            vendedor.setDescription("Rol para vendedores");
-            roleRepo.save(vendedor);
+            System.out.println("✅ Roles iniciales creados: CLIENTE, ADMIN");
             
-            System.out.println("✅ Roles iniciales creados: CLIENTE, ADMIN, VENDEDOR");
+            // Crear usuario administrador por defecto
+            createAdminUser(savedAdmin);
+        }
+        
+        // También crear admin si los roles ya existen pero no hay usuarios admin
+        checkAndCreateAdmin();
+    }
+    
+    private void createAdminUser(Role adminRole) {
+        // Verificar si ya existe el usuario admin
+        if (userRepo.findOneByUsername("jhon@gmail.com") == null) {
+            User adminUser = new User();
+            adminUser.setUsername("jhon@gmail.com");
+            adminUser.setPassword(passwordEncoder.encode("123456"));
+            adminUser.setEnabled(true);
+            adminUser.setRoles(Arrays.asList(adminRole));
+            
+            userRepo.save(adminUser);
+            System.out.println("✅ Usuario administrador creado: jhon@gmail.com / 123456");
+        }
+    }
+    
+    private void checkAndCreateAdmin() {
+        // Buscar rol ADMIN
+        Role adminRole = roleRepo.findAll().stream()
+                .filter(role -> "ADMIN".equals(role.getName()))
+                .findFirst()
+                .orElse(null);
+                
+        if (adminRole != null && userRepo.findOneByUsername("jhon@gmail.com") == null) {
+            createAdminUser(adminRole);
         }
     }
 }
