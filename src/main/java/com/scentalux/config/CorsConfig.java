@@ -1,6 +1,5 @@
 package com.scentalux.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -11,9 +10,9 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(
-                    "http://localhost:9002",  // Tu frontend en puerto 9002
-                    "http://localhost:3000"   // Por si acaso también 3000
+                .allowedOriginPatterns(  // ← USA ESTO EN LUGAR DE allowedOrigins
+                    "http://localhost:9002",
+                    "http://localhost:3000"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
