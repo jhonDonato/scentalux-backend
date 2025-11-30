@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://scentalux-frontend.vercel.app")
+                .allowedOrigins("http://localhost:9002")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(false); // ← Temporalmente SIN credentials
