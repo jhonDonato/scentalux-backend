@@ -9,10 +9,28 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:9002")
-                .allowedMethods("*")
+        registry.addMapping("/api/**")
+                .allowedOrigins("http://localhost:9002", "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("Authorization", "Content-Type", "Accept", "Origin", 
+                              "X-Requested-With", "Access-Control-Request-Method", 
+                              "Access-Control-Request-Headers")
+                .exposedHeaders("Authorization", "Content-Disposition")
+                .allowCredentials(true)
+                .maxAge(3600);
+                
+        registry.addMapping("/orders/**")
+                .allowedOrigins("http://localhost:9002", "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(false); // ← Temporalmente SIN credentials
+                .allowCredentials(true)
+                .maxAge(3600);
+                
+        registry.addMapping("/uploads/**")
+                .allowedOrigins("http://localhost:9002", "http://localhost:3000")
+                .allowedMethods("GET", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }
