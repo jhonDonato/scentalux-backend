@@ -16,19 +16,42 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-//Clase S7
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity //Importante para anotaciones @PreAuthorize
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final UserDetailsService jwtUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:9002", 
+            "https://scentalux-frontend.vercel.app",
+            "https://scentalux-frontend-git-main-jhons-proyectos-be5c6adf.vercel.app",
+            "https://scentalux-frontend-ib6pe8zz8-jhons-proyectos-be5c6adf.vercel.app"
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -47,23 +70,22 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        //Desde Spring Boot 3.1+
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
-                    .requestMatchers(antMatcher("/health")).permitAll()  // ← NUEVA LÍNEA
-                        .requestMatchers(antMatcher("/login")).permitAll()
-                        .requestMatchers(antMatcher("/roles/**")).permitAll()
-                        .requestMatchers(antMatcher("/usuarios/**")).permitAll()
-                        .requestMatchers(antMatcher("/mail/**")).permitAll()
-                        .requestMatchers(antMatcher("/perfumes/**")).permitAll()
-                        .requestMatchers(antMatcher("/api/upload/**")).permitAll()  // ✅ PERMITE SUBIR ARCHIVOS
-                        .requestMatchers(antMatcher("/uploads/**")).permitAll()      // ✅ PERMITE ACCEDER A IMÁGENES
-                        // 🔥 NUEVAS RUTAS PARA ORDERS
-                        .requestMatchers(antMatcher("/orders/my-orders")).authenticated()
-                        .requestMatchers(antMatcher("/orders")).authenticated()
-                        .requestMatchers(antMatcher("/orders/**")).authenticated()
-                        .anyRequest().authenticated()   
+                    .requestMatchers(antMatcher("/health")).permitAll()
+                    .requestMatchers(antMatcher("/login")).permitAll()
+                    .requestMatchers(antMatcher("/roles/**")).permitAll()
+                    .requestMatchers(antMatcher("/usuarios/**")).permitAll()
+                    .requestMatchers(antMatcher("/mail/**")).permitAll()
+                    .requestMatchers(antMatcher("/perfumes/**")).permitAll()
+                    .requestMatchers(antMatcher("/api/upload/**")).permitAll()
+                    .requestMatchers(antMatcher("/uploads/**")).permitAll()
+                    .requestMatchers(antMatcher("/orders/my-orders")).authenticated()
+                    .requestMatchers(antMatcher("/orders")).authenticated()
+                    .requestMatchers(antMatcher("/orders/**")).authenticated()
+                    .anyRequest().authenticated()   
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint));
@@ -72,5 +94,4 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
 }
